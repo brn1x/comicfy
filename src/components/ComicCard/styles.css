@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+  border: 1px solid #000;
+  border-radius: 5px;
+  width: 184px;
+  height: 255px;
+  margin: 16px;
+
+  cursor: pointer;
+}
+
+.title-div {
+  width: 100%;
+  text-align: center;
+  border: 0px solid #000;
+  border-top-width: 1px;
+  position: absolute;
+  bottom: 0;
+}
+
+.title {
+  font-size: 12px;
+}
