@@ -2,7 +2,10 @@ const { app, BrowserWindow, dialog, shell, ipcMain } = require('electron')
 const isDev = require('electron-is-dev');   
 const { resolve, join } = require('path');
 const { readdir } = require('fs').promises
-const Store = require('electron-store')
+const Shell = require('node-powershell')
+const Store = require('electron-store');
+const { readdirSync } = require('fs');
+const COMICFY_DIR = 'C:\\Users\\bruno\\.comicfy'
 
 let window
 
@@ -23,6 +26,11 @@ const schema = {
 }
 
 const store = new Store({ schema })
+
+const ps = new Shell({
+  executionPolicy: 'Bypass',
+  noProfile: true
+})
 
 const createWindow = async () => {
   store.delete('files')
@@ -62,7 +70,6 @@ ipcMain.on('toggle-dialog', async (event, arg) => {
 })
 
 ipcMain.on('toggle-files', (event, arg) => {
-  console.log('CBR', getStoreFiles())
   window.send('cbr-files', getStoreFiles())
 })
 
@@ -95,11 +102,20 @@ async function openDialog () {
 
   const hq = cbrFiles.map(cbrFile => {
     const splited = cbrFile.split('\\')
+
+    ps.addCommand(`Expand-7Zip "${cbrFile}" "${COMICFY_DIR}\\data\\"`)
+    ps.invoke()
+    
+    const coverName = readdirSync(`${COMICFY_DIR}\\data\\${splited[splited.length - 1].replace('.cbr', '')}\\`, { withFileTypes: true })
+    const cover = `${COMICFY_DIR}\\data\\${splited[splited.length - 1].replace('.cbr', '')}\\${coverName[0].name}`
+
     const file = {
       name: splited[splited.length - 1],
       folder: splited[splited.length - 2],
-      dir: cbrFile
+      dir: cbrFile,
+      cover: cover
     }
+
     return file
   })
 
@@ -119,4 +135,5 @@ function getStoreFiles () {
 
 async function openFile (path) {
   await shell.openPath(path)
+  shell.openPath(join(__dirname, './teste.ps1'))
 }

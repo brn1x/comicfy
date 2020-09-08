@@ -16,7 +16,6 @@ function App() {
   }
 
   function openFile (path) {
-    console.log(path)
     electron.ipcRenderer.send('open-file', path)
   }
 
@@ -34,7 +33,7 @@ function App() {
       <button onClick={showFiles}>Log stored files</button>
       <div className="comic-list">
         { comics.map(comic => (
-          <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} openFile={openFile} />
+          <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
         )) }
       </div>
     </div>
