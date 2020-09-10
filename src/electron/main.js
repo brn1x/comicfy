@@ -154,7 +154,7 @@ async function openFile (path) {
 }
 
 async function getCover (files) {
-  const newFiles = Promise.all(await files.map(async file => {
+  const newFiles = await Promise.all(files.map(async file => {
     const splited = file.dir.split('\\')
     ps.addCommand(`Expand-7Zip "${file.dir}" "${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}"`)
     await ps.invoke()
@@ -172,5 +172,20 @@ async function getCover (files) {
     return file
   }))
 
-  console.log('new Files', newFiles)
+  updateCover(newFiles)
+}
+
+function updateCover (files) {
+  const dbFile = store.get('files')
+  const storedFiles = dbFile ? JSON.parse(dbFile) : []
+  
+  storedFiles.map(x => {
+    return files.filter(y => {
+      if (x.name === y.name)
+        x.cover = y.cover
+        return x
+    })
+  })
+
+  store.set('files', JSON.stringify([...storedFiles]))
 }
