@@ -3,9 +3,8 @@ const isDev = require('electron-is-dev');
 const { resolve, join } = require('path');
 const { readdir } = require('fs').promises
 const Shell = require('node-powershell')
-const Store = require('electron-store');
-const { readdirSync } = require('fs');
-const COMICFY_DIR = 'C:\\Users\\bruno\\.comicfy'
+const Store = require('electron-store')
+const { readdirSync } = require('fs')
 
 let window
 
@@ -15,6 +14,7 @@ const config = {
   frame: true,
   defaultEncoding: 'utf8',
   webPreferences: {
+    webSecurity: false,
     nodeIntegration: true
   }
 }
@@ -102,38 +102,75 @@ async function openDialog () {
 
   const hq = cbrFiles.map(cbrFile => {
     const splited = cbrFile.split('\\')
-
-    ps.addCommand(`Expand-7Zip "${cbrFile}" "${COMICFY_DIR}\\data\\"`)
-    ps.invoke()
     
-    const coverName = readdirSync(`${COMICFY_DIR}\\data\\${splited[splited.length - 1].replace('.cbr', '')}\\`, { withFileTypes: true })
-    const cover = `${COMICFY_DIR}\\data\\${splited[splited.length - 1].replace('.cbr', '')}\\${coverName[0].name}`
-
     const file = {
-      name: splited[splited.length - 1],
+      name: splited[splited.length - 1].replace('.cbr', ''),
       folder: splited[splited.length - 2],
       dir: cbrFile,
-      cover: cover
+      cover: 'common.jpg'
     }
 
     return file
   })
 
-  storeFiles(hq)
+  
+  await storeFiles(hq)
 }
 
-function storeFiles (files) {
-  store.set('files', JSON.stringify([...files]))
+async function storeFiles (files) {
+  const verifiedFiles = verifyDb(files)
+  const storedFiles = store.get('files')
+  const dbFiles = storedFiles ? JSON.parse(storedFiles) : []
+  store.set('files', JSON.stringify([...dbFiles, ...verifiedFiles]))
+
+  await getCover(verifiedFiles)
 }
 
 function getStoreFiles () {
   const storedFiles = store.get('files')
-  const files = storeFiles ? JSON.parse(storedFiles) : []
+  const files = storedFiles ? JSON.parse(storedFiles) : []
 
   return files
 }
 
+function verifyDb (files) {
+  const dbFile = store.get('files')
+  const storedFiles = dbFile ? JSON.parse(dbFile) : []
+  
+  const diff = files.reduce((unique, current) => {
+		const x = storedFiles.find(item => item.name === current.name)
+		if (!x) {
+			return unique.concat([current])
+		} else {
+			return unique
+		}
+	}, [])
+
+  return diff
+}
+
 async function openFile (path) {
   await shell.openPath(path)
-  shell.openPath(join(__dirname, './teste.ps1'))
+}
+
+async function getCover (files) {
+  const newFiles = Promise.all(await files.map(async file => {
+    const splited = file.dir.split('\\')
+    ps.addCommand(`Expand-7Zip "${file.dir}" "${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}"`)
+    await ps.invoke()
+    
+    const coverName = readdirSync(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`, { withFileTypes: true })[0]
+    let cover = splited[splited.length - 1] + '/' + coverName.name
+  
+    if (coverName.isDirectory()) {
+      const newCover = readdirSync(resolve(__dirname, '..', 'assets', 'covers') + '\\' + cover, { withFileTypes: true })[0]
+      cover = cover + '/' + newCover.name
+    }
+
+    file.cover = cover
+
+    return file
+  }))
+
+  console.log('new Files', newFiles)
 }

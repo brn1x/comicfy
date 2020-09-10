@@ -11,6 +11,7 @@
 
 .title-div {
   width: 100%;
+  height: 40px;
   text-align: center;
   border: 0px solid #000;
   border-top-width: 1px;
@@ -20,4 +21,11 @@
 
 .title {
   font-size: 12px;
+}
+
+.cover {
+  height: 213px;
+  width: 100%;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
 }
