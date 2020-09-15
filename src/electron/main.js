@@ -29,7 +29,7 @@ const store = new Store({ schema })
 
 const ps = new Shell({
   executionPolicy: 'Bypass',
-  noProfile: true
+  noProfile: true,
 })
 
 const createWindow = async () => {
@@ -157,22 +157,58 @@ async function getCover (files) {
   const newFiles = await Promise.all(files.map(async file => {
     const splited = file.dir.split('\\')
     ps.addCommand(`Expand-7Zip "${file.dir}" "${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}"`)
-    await ps.invoke()
-    
-    const coverName = readdirSync(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`, { withFileTypes: true })[0]
-    let cover = splited[splited.length - 1] + '/' + coverName.name
-  
-    if (coverName.isDirectory()) {
-      const newCover = readdirSync(resolve(__dirname, '..', 'assets', 'covers') + '\\' + cover, { withFileTypes: true })[0]
-      cover = cover + '/' + newCover.name
-    }
-
-    file.cover = cover
-
     return file
   }))
+  await ps.invoke()
 
-  updateCover(newFiles)
+  const updatedFiles = await Promise.all(newFiles.map(async file => {
+    const splited = file.dir.split('\\')
+    const allImgFiles = await verifyCoverFile(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
+  
+    const singleCover = await removeNoCoverFiles(allImgFiles)
+
+    console.log(singleCover)
+    file.cover = singleCover
+  
+    return file
+  }))
+  updateCover(updatedFiles)
+  await ps.invoke()
+}
+
+async function verifyCoverFile (dirFile) {
+  const covers = readdirSync(dirFile, { withFileTypes: true })
+  
+  const allImgFiles = await Promise.all(covers.map(coverName => {
+    const response = resolve(dirFile, coverName.name)
+    if (coverName.isDirectory()) {
+      return verifyCoverFile(response)
+    } else if (coverName.name.indexOf('.jpg') !== -1 ||
+      coverName.name.indexOf('.png') !== -1 ||
+      coverName.name.indexOf('.jpeg') !== -1) {
+        return response
+    } else {
+      return response + 'NOT IMAGE'
+    }
+  }))
+  
+  return Array.prototype.concat(...allImgFiles)
+}
+
+async function removeNoCoverFiles (fileDirs) {
+  fileDirs.forEach((fileDir, index) => {
+    if (fileDir.indexOf('NOT IMAGE') !== -1){
+      ps.addCommand(`rm "${fileDir.split('NOT IMAGE')[0]}"`)
+      fileDirs.splice(index, 1)
+    }
+  })
+  
+  fileDirs.forEach((fileDir, index) => {
+    if (index !== 0) {
+      ps.addCommand(`rm "${fileDir}"`)
+    }
+  })
+  return fileDirs[0].split('\\covers\\')[1].replace(/\\/g, "/")
 }
 
 function updateCover (files) {
@@ -185,7 +221,7 @@ function updateCover (files) {
         x.cover = y.cover
         return x
     })
-  })
+    })
 
   store.set('files', JSON.stringify([...storedFiles]))
 }
