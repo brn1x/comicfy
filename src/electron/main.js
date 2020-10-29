@@ -165,9 +165,10 @@ async function getCover (files) {
     const splited = file.dir.split('\\')
     const allImgFiles = await verifyCoverFile(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
   
+    console.log('allImgFiles', allImgFiles)
     const singleCover = await removeNoCoverFiles(allImgFiles)
+    console.log('single Cover', singleCover)
 
-    console.log(singleCover)
     file.cover = singleCover
   
     return file
@@ -196,16 +197,18 @@ async function verifyCoverFile (dirFile) {
 }
 
 async function removeNoCoverFiles (fileDirs) {
+  // Delete everything thats not an image
   fileDirs.forEach((fileDir, index) => {
     if (fileDir.indexOf('NOT IMAGE') !== -1){
-      ps.addCommand(`rm "${fileDir.split('NOT IMAGE')[0]}"`)
+      const fullPath = fileDir.split('NOT IMAGE')[0]
+      shell.moveItemToTrash(fullPath, true)
       fileDirs.splice(index, 1)
     }
   })
-  
+  // Delete all imgs expect the first one
   fileDirs.forEach((fileDir, index) => {
     if (index !== 0) {
-      ps.addCommand(`rm "${fileDir}"`)
+      shell.moveItemToTrash(fileDir, true)
     }
   })
   return fileDirs[0].split('\\covers\\')[1].replace(/\\/g, "/")
