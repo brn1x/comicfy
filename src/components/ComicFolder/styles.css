@@ -1,28 +1,21 @@
-.container {
+.comic-folder {
   position: relative;
   border: 1px solid #000;
   border-radius: 5px;
-  width: 184px;
-  height: 255px;
+  width: 190px;
+  height: 190px;
   margin: 16px;
-
+  background-color: #333;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.container:hover {
-  border: 3px solid #fff;
-  border-radius: 10px;
-  /* width: calc(184px + 9.2px);
-  height: calc(255px + 12.75px); */
-  margin: 16px;
-}
-
-/* .container:hover .cover {
-  height: calc(213px + 10.65px);
-} */
-
-.container:hover .title {
-  font-size: 16px;
+.folder-img {
+  padding: 8px;
+  height: 146px;
+  width: 100%;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
 }
 
 .title-div {
@@ -39,16 +32,10 @@
   align-items: center;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  color: #fff;
 }
 
 .title {
   font-size: 12px;
   font-weight: bold;
-}
-
-.cover {
-  height: 213px;
-  width: 100%;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
 }

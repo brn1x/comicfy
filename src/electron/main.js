@@ -5,6 +5,7 @@ const { readdir } = require('fs').promises
 const Shell = require('node-powershell')
 const Store = require('electron-store')
 const { readdirSync } = require('fs')
+const _ = require('lodash')
 
 let window
 
@@ -33,7 +34,7 @@ const ps = new Shell({
 })
 
 const createWindow = async () => {
-  store.delete('files')
+  // store.delete('files')
 
   window = new BrowserWindow(config)
 
@@ -130,7 +131,11 @@ function getStoreFiles () {
   const storedFiles = store.get('files')
   const files = storedFiles ? JSON.parse(storedFiles) : []
 
-  return files
+  const folderFiles = _.groupBy(files, (file) => {
+    return file.folder
+  })
+
+  return folderFiles
 }
 
 function verifyDb (files) {
@@ -165,9 +170,7 @@ async function getCover (files) {
     const splited = file.dir.split('\\')
     const allImgFiles = await verifyCoverFile(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
   
-    console.log('allImgFiles', allImgFiles)
     const singleCover = await removeNoCoverFiles(allImgFiles)
-    console.log('single Cover', singleCover)
 
     file.cover = singleCover
   

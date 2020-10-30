@@ -1,9 +1,8 @@
-import React from 'react'
+import React from 'react';
 
-import './styles.css'
+import './styles.css';
 
 const ComicCard = (props) => {
-  console.log(props)
   const cover = require(`../../assets/covers/${props.cover}`)
 
   return (
@@ -16,6 +15,6 @@ const ComicCard = (props) => {
       </div>
     </div>
   )
-}
+};
 
-export default ComicCard
+export default ComicCard;
