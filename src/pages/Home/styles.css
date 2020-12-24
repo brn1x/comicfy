@@ -15,25 +15,25 @@
   color: white;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 650px) {
   .comic-list {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 950px) {
   .comic-list {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1250px) {
   .comic-list { 
     grid-template-columns: repeat(5, 1fr);
   }
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1550px) {
   .comic-list {
     grid-template-columns: repeat(6, 1fr);
   }

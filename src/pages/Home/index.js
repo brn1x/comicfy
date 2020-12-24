@@ -4,7 +4,7 @@ import ComicCard from '../../components/ComicCard';
 import ComicFolder from '../../components/ComicFolder';
 import Loading from '../../components/Loading';
 import Menu from '../../components/Menu';
-import { ArrowLeft } from 'react-feather'
+import { ArrowLeft } from 'react-feather';
 
 import '../../global.css';
 import './styles.css';
@@ -12,10 +12,6 @@ import './styles.css';
 const electron = window.require('electron');
 
 function Home() {
-  function openDialog () {
-    electron.ipcRenderer.send('toggle-dialog');
-  }
-  
   function showFiles () {
     setComics([])
     electron.ipcRenderer.send('toggle-files');
@@ -63,7 +59,7 @@ function Home() {
 
   return (
     <div>
-      <Menu handleAddComic={openDialog} />
+      <Menu selected={'Home'} />
       { isLoading ? 
       ( 
         <Loading />

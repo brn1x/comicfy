@@ -17,7 +17,8 @@
 
 .draggable-area {
   position: absolute;
-  width: calc(100% - 118px);
+  margin-top: 2px;
+  width: calc(100% - 108px);
   height: 16px;
   -webkit-app-region: drag;
 }

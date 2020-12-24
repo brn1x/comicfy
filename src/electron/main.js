@@ -45,6 +45,7 @@ const createWindow = async () => {
   window.webContents.openDevTools()
   window.removeMenu()
 
+  window.setMinimumSize(600, 600)
   // const tray = new Tray(resolve(__dirname, '..', 'assets', 'iconTemplate.png'))
 }
 
@@ -70,8 +71,16 @@ ipcMain.on('close-app', async (event, arg) => {
 })
 
 ipcMain.on('maximize-window', async (event, arg) => {
-  console.log(window.isFullScreen())
-  window.isFullScreen() ? window.setFullScreen(false) : window.setFullScreen(true)
+  const size = window.getSize()
+  window.setFullScreen(true)
+  const newSize = window.getSize()
+
+  console.log(size)
+  console.log(newSize)
+  if (size[0] === newSize[0] && size[1] === newSize[1]) {
+    window.setSize(900, 600)
+    window.center()
+  }
 })
 
 ipcMain.on('minimize-window', async (event, arg) => {
