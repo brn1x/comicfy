@@ -12,8 +12,9 @@ let window
 const config = {
   width: 900,
   height: 600,
-  frame: true,
   defaultEncoding: 'utf8',
+  transparent: true,
+  frame: false,
   webPreferences: {
     webSecurity: false,
     nodeIntegration: true
@@ -34,7 +35,7 @@ const ps = new Shell({
 })
 
 const createWindow = async () => {
-  store.delete('files')
+  // store.delete('files')
 
   window = new BrowserWindow(config)
 
@@ -42,6 +43,7 @@ const createWindow = async () => {
 
   window.loadURL(startURL)
   window.webContents.openDevTools()
+  window.removeMenu()
 
   // const tray = new Tray(resolve(__dirname, '..', 'assets', 'iconTemplate.png'))
 }
@@ -62,6 +64,20 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+ipcMain.on('close-app', async (event, arg) => {
+  app.quit()
+})
+
+ipcMain.on('maximize-window', async (event, arg) => {
+  console.log(window.isFullScreen())
+  window.isFullScreen() ? window.setFullScreen(false) : window.setFullScreen(true)
+})
+
+ipcMain.on('minimize-window', async (event, arg) => {
+  window.minimize()
+})
+
 
 /**
  * Open the dialog to select the dir from comics
@@ -93,7 +109,9 @@ ipcMain.on('open-file', (event, arg) => {
 
 
 /**
- * Functions [UTILS]
+ * @description Receive a directory to scan and return all the files on it
+ * @param {String} path Initial directory to scan
+ * @returns {Array} Directory from all files found in this path
  */
 async function getAllFiles (path) {
   const dirs = await readdir(path, { withFileTypes: true })
@@ -108,6 +126,10 @@ async function getAllFiles (path) {
   return Array.prototype.concat(...files)
 }
 
+/**
+ * @description Open up the dialog to select a directory
+ * @returns {void}
+ */
 async function openDialog () {
   const path = dialog.showOpenDialogSync({ properties: ['openDirectory'] })
 
@@ -133,6 +155,11 @@ async function openDialog () {
   await storeFiles(hq)
 }
 
+/**
+ * @description Receive an array of Files to store on database
+ * @param {Object[]} files Files objects array
+ * @returns {void}
+ */
 async function storeFiles (files) {
   const verifiedFiles = verifyDb(files)
   const storedFiles = store.get('files')
@@ -142,6 +169,10 @@ async function storeFiles (files) {
   await getCover(verifiedFiles)
 }
 
+/**
+ * @description Get all the files from database and return it grouped by folder
+ * @returns {Object[]} Files objects array
+ */
 function getStoreFiles () {
   const storedFiles = store.get('files')
   const files = storedFiles ? JSON.parse(storedFiles) : []
@@ -153,6 +184,10 @@ function getStoreFiles () {
   return folderFiles
 }
 
+/**
+ * 
+ * @param {Object[]} files Files objects array
+ */
 function verifyDb (files) {
   const dbFile = store.get('files')
   const storedFiles = dbFile ? JSON.parse(dbFile) : []
@@ -214,6 +249,11 @@ async function verifyCoverFile (dirFile) {
   return Array.prototype.concat(...allImgFiles)
 }
 
+/**
+ * @description Remove all the files that are not the cover of the comic book
+ * @param {Object[]} fileDirs 
+ * @returns {String} Directory of the cover
+ */
 async function removeNoCoverFiles (fileDirs) {
   // Delete everything thats not an image
   fileDirs.forEach((fileDir, index) => {

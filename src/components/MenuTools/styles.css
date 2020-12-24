@@ -1,0 +1,23 @@
+.menu-tools-container {
+  margin-top: 8px;
+  position: absolute;
+  right: 10px;
+  height: 30px;
+}
+
+.menu-tools-container :hover {
+  color: white;
+}
+
+.icon {
+  margin-left: 16px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.draggable-area {
+  position: absolute;
+  width: calc(100% - 118px);
+  height: 16px;
+  -webkit-app-region: drag;
+}

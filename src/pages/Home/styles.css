@@ -5,6 +5,15 @@
   justify-items: center;
 }
 
+.arrow-left-icon {
+  margin: 12px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.comics-container :hover {
+  color: white;
+}
 
 @media (min-width: 600px) {
   .comic-list {

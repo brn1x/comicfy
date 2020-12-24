@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import ComicCard from '../../components/ComicCard';
 import ComicFolder from '../../components/ComicFolder';
 import Loading from '../../components/Loading';
+import Menu from '../../components/Menu';
+import { ArrowLeft } from 'react-feather'
 
 import '../../global.css';
 import './styles.css';
@@ -32,6 +34,8 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    showFiles()
+
     electron.ipcRenderer.on('loading', (event, arg) => {
       setIsLoading(true)
     });
@@ -59,24 +63,30 @@ function Home() {
 
   return (
     <div>
-      <button onClick={openDialog}>Add new directory</button>
-      <button onClick={showFiles}>Log stored files</button>
+      <Menu handleAddComic={openDialog} />
       { isLoading ? 
       ( 
         <Loading />
       ) : 
       ( 
-        <div className="comic-list">
+        <>
           { comics.length > 0 ? (
-            comics.map(comic => (
-              <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
-            )) 
+            <div className="comics-container">
+              <ArrowLeft onClick={showFiles} className="arrow-left-icon" />
+              <div className="comic-list">
+                { comics.map(comic => (
+                  <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
+                ))}
+              </div>
+            </div>
           ) : (
-            folders.map(folder => (
-              <ComicFolder key={folder.folder} title={folder.folder} comics={folder.comics} openFolder={() => openFolder(folder.comics)} />
-            ))
+            <div className="comic-list">
+              { folders.map(folder => (
+                  <ComicFolder key={folder.folder} title={folder.folder} comics={folder.comics} openFolder={() => openFolder(folder.comics)} />
+              ))}
+            </div>
           ) }
-        </div> 
+        </> 
       ) }
       
     </div>
