@@ -34,7 +34,7 @@ const ps = new Shell({
 })
 
 const createWindow = async () => {
-  // store.delete('files')
+  store.delete('files')
 
   window = new BrowserWindow(config)
 
@@ -64,16 +64,29 @@ app.on('activate', () => {
 })
 
 /**
- * Renderer listeners
+ * Open the dialog to select the dir from comics
  */
 ipcMain.on('toggle-dialog', async (event, arg) => {
-  await openDialog()
+  try {
+    await openDialog()
+    window.send('not-loading', getStoreFiles())
+    window.send('cbr-files', getStoreFiles())
+  } catch (error) {
+    window.send('not-loading', getStoreFiles())
+  }
 })
 
+/**
+ * Show up the files
+ */
 ipcMain.on('toggle-files', (event, arg) => {
   window.send('cbr-files', getStoreFiles())
 })
 
+
+/**
+ * Open up the selected comic
+ */
 ipcMain.on('open-file', (event, arg) => {
   openFile(arg)
 })
@@ -97,6 +110,8 @@ async function getAllFiles (path) {
 
 async function openDialog () {
   const path = dialog.showOpenDialogSync({ properties: ['openDirectory'] })
+
+  window.send('loading')
 
   const allFiles = await getAllFiles(path[0])
   const cbrFiles = allFiles.filter(file => file.includes('.cbr'))

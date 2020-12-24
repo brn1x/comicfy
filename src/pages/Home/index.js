@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import ComicCard from '../../components/ComicCard';
 import ComicFolder from '../../components/ComicFolder';
+import Loading from '../../components/Loading';
 
 import '../../global.css';
 import './styles.css';
@@ -28,8 +29,17 @@ function Home() {
 
   const [comics, setComics] = useState([]);
   const [folders, setFolders] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    electron.ipcRenderer.on('loading', (event, arg) => {
+      setIsLoading(true)
+    });
+
+    electron.ipcRenderer.on('not-loading', (event, arg) => {
+      setIsLoading(false)
+    });
+
     electron.ipcRenderer.on('cbr-files', (event, arg) => {
       const folders = Object.keys(arg);
       let onlyComics = [];
@@ -38,13 +48,12 @@ function Home() {
         let aux = {
           folder: folder,
           comics: arg[folder]
-        }
-        newFolders.push(aux)
+        };
+        newFolders.push(aux);
         onlyComics.push(...arg[folder]);
-      })
+      });
 
       setFolders(newFolders);
-      // setComics(onlyComics);
     })
   }, []);
 
@@ -52,17 +61,24 @@ function Home() {
     <div>
       <button onClick={openDialog}>Add new directory</button>
       <button onClick={showFiles}>Log stored files</button>
-      <div className="comic-list">
-        { comics.length > 0 ? (
-          comics.map(comic => (
-            <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
-          )) 
-        ) : (
-          folders.map(folder => (
-            <ComicFolder key={folder.folder} title={folder.folder} comics={folder.comics} openFolder={() => openFolder(folder.comics)} />
-          ))
-        ) }
-      </div>
+      { isLoading ? 
+      ( 
+        <Loading />
+      ) : 
+      ( 
+        <div className="comic-list">
+          { comics.length > 0 ? (
+            comics.map(comic => (
+              <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
+            )) 
+          ) : (
+            folders.map(folder => (
+              <ComicFolder key={folder.folder} title={folder.folder} comics={folder.comics} openFolder={() => openFolder(folder.comics)} />
+            ))
+          ) }
+        </div> 
+      ) }
+      
     </div>
   );
 }
