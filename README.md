@@ -20,5 +20,3 @@ You can specify a directory on your computer for *Comicfy* to scan for **.cbr** 
   Set-PSRepository -Name 'PSGallery' -SourceLocation "https://www.powershellgallery.com/api/v2" -InstallationPolicy Trusted
   Install-Module -Name 7Zip4PowerShell -Force
   ````
-
-*Test*
