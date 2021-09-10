@@ -10,12 +10,12 @@
     "@testing-library/user-event": "^7.1.2",
     "electron-store": "^6.0.0",
     "lodash": "^4.17.20",
-    "node-powershell": "^4.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.9",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "unrar-promise": "^2.0.1"
   },
   "scripts": {
     "ebuild": "npm run build && node_modules/.bin/build",

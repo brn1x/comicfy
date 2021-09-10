@@ -30,7 +30,7 @@ const schema = {
 const store = new Store({ schema })
 
 const createWindow = async () => {
-  // store.delete('files')
+  store.delete('files')
 
   window = new BrowserWindow(config)
 
@@ -70,6 +70,8 @@ ipcMain.on('maximize-window', async (event, arg) => {
   window.setFullScreen(true)
   const newSize = window.getSize()
 
+  console.log(size)
+  console.log(newSize)
   if (size[0] === newSize[0] && size[1] === newSize[1]) {
     window.setSize(900, 600)
     window.center()
@@ -79,6 +81,7 @@ ipcMain.on('maximize-window', async (event, arg) => {
 ipcMain.on('minimize-window', async (event, arg) => {
   window.minimize()
 })
+
 
 /**
  * Open the dialog to select the dir from comics
@@ -108,6 +111,7 @@ ipcMain.on('open-file', (event, arg) => {
   openFile(arg)
 })
 
+
 /**
  * @description Receive a directory to scan and return all the files on it
  * @param {String} path Initial directory to scan
@@ -115,6 +119,7 @@ ipcMain.on('open-file', (event, arg) => {
  */
 async function getAllFiles (path) {
   const dirs = await readdir(path, { withFileTypes: true })
+
   const files = await Promise.all(dirs.map(dir => {
     const response = resolve(path, dir.name)
     if (dir.isDirectory()) {
@@ -166,16 +171,7 @@ async function storeFiles (files) {
   const dbFiles = storedFiles ? JSON.parse(storedFiles) : []
   store.set('files', JSON.stringify([...dbFiles, ...verifiedFiles]))
 
-  for (let i = 0; i < verifiedFiles.length; i++) {
-    timeAwait(100 * i)
-    await getCover(verifiedFiles[i])
-  }
-  // await getCover(verifiedFiles)
-}
-
-async function timeAwait (ms) {
-  console.log(ms)
-  await setTimeout(() => {}, ms)
+  await getCover(verifiedFiles)
 }
 
 /**
@@ -217,24 +213,41 @@ async function openFile (path) {
   await shell.openPath(path)
 }
 
-async function getCover (file) {
-  const splited = file.dir.split('\\')
-  await unrar(file.dir, `${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
+// ==== // =====
 
-  const allImgFiles = await verifyCoverFile(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
+async function timeAwait (ms) {
+  await setTimeout(() => {}, ms)
+}
 
-  const singleCover = await removeNoCoverFiles(allImgFiles)
+async function getCover (files) {
+  const newFiles2 = []
 
-  file.cover = singleCover
+  for(let i = 0; i < files.length; i++) {
+    const splited = files[i].dir.split('\\')
+    await timeAwait(100 * i)
+    await unrar(files[i].dir, `${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
+    newFiles2.push(files[i])
+  }
 
-  updateCover(file)
+  const updatedFiles = []
+  for(let i = 0; i < newFiles2.length; i++) {
+    const splited = newFiles2[i].dir.split('\\')
+    const allImgFiles = await verifyCoverFile(`${resolve(__dirname, '..', 'assets', 'covers') + '\\' + splited[splited.length - 1]}`)
+  
+    const singleCover = await removeNoCoverFiles(allImgFiles)
+  
+    newFiles2[i].cover = singleCover
+  
+    updatedFiles.push(newFiles2[i])
+  }
+  updateCover(updatedFiles)
 }
 
 async function verifyCoverFile (dirFile) {
   const covers = readdirSync(dirFile, { withFileTypes: true })
   
   const allImgFiles = []
-  for (let i = 0; i < covers.length; i++) {
+  for(let i = 0; i < covers.length; i++) {
     const response = resolve(dirFile, covers[i].name)
     if (covers[i].isDirectory()) {
       return verifyCoverFile(response)
@@ -254,9 +267,9 @@ async function verifyCoverFile (dirFile) {
  * @param {Object[]} fileDirs 
  * @returns {String} Directory of the cover
  */
- async function removeNoCoverFiles (fileDirs) {
+async function removeNoCoverFiles (fileDirs) {
   // Delete everything thats not an image
-  for (let i = 0; i < fileDirs.length; i++) {
+  for(let i = 0; i < fileDirs.length; i++) {
     if (fileDirs[i].indexOf('NOT IMAGE') !== -1) {
       const fullPath = fileDirs[i].split('NOT IMAGE')[0]
       shell.moveItemToTrash(fullPath, true)
@@ -265,7 +278,7 @@ async function verifyCoverFile (dirFile) {
   }
 
   // Delete all imgs except the first one
-  for (let i = 0; i < fileDirs.length; i++) {
+  for(let i = 0; i < fileDirs.length; i++) {
     if (i !== 0) {
       shell.moveItemToTrash(fileDirs[i], true)
     }
@@ -274,17 +287,17 @@ async function verifyCoverFile (dirFile) {
   return fileDirs[0].split('\\covers\\')[1].replace(/\\/g, "/")
 }
 
-function updateCover (file) {
+function updateCover (files) {
   const dbFile = store.get('files')
   const storedFiles = dbFile ? JSON.parse(dbFile) : []
   
   storedFiles.map(x => {
-    if (x.name === file.name) {
-      x.cover = file.cover
-      return x
-    }
-    return x
-  })
+    return files.filter(y => {
+      if (x.name === y.name)
+        x.cover = y.cover
+        return x
+    })
+    })
 
   store.set('files', JSON.stringify([...storedFiles]))
 }
