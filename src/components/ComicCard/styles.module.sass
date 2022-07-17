@@ -1,0 +1,52 @@
+.container
+  position: relative
+  border: 1px solid #000
+  border-radius: 5px
+  width: 184px
+  height: 255px
+  margin: 16px
+  cursor: pointer
+  box-shadow: 10px 5px 22px black
+
+  &:hover
+    border: 3px solid #fff
+    border-radius: 10px
+    width: calc(184px + 9.2px)
+    height: calc(255px + 12.75px)
+    margin: 16px
+
+    .title-div
+      .title
+        font-size: 16px
+
+  .cover
+    height: calc(100% - 40px)
+    width: 100%
+    border-top-right-radius: 5px
+    border-top-left-radius: 5px
+
+    img
+      border-top-right-radius: 5px
+      border-top-left-radius: 5px
+      width: 100%
+      height: 100%
+
+  .title-div
+    background: #A9A7D1
+    display: flex
+    width: 100%
+    height: 40px
+    text-align: center
+    border: 0px solid #000
+    border-top-width: 1px
+    position: absolute
+    bottom: 0
+    justify-content: center
+    align-items: center
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+    padding: 2px 5px 2px 5px
+
+    .title
+      font-size: 12px
+      font-weight: bold

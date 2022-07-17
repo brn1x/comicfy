@@ -1,0 +1,32 @@
+.content-container
+  width: calc(100% - 50px)
+
+  .comics-container
+    &:hover
+      color: white
+
+    .arrow-left-icon
+      margin: 12px
+      cursor: pointer
+      color: #ccc
+
+      &:hover
+        color: white
+
+    .comic-list
+      display: grid
+      grid-template-columns: repeat(2, 1fr)
+      grid-gap: 12px
+      justify-items: center
+
+      @media (min-width: 650px)
+        grid-template-columns: repeat(3, 1fr)
+
+      @media (min-width: 950px)
+        grid-template-columns: repeat(4, 1fr)
+
+      @media (min-width: 1250px)
+        grid-template-columns: repeat(5, 1fr)
+
+      @media (min-width: 1550px)
+        grid-template-columns: repeat(6, 1fr)
