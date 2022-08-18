@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { open } from '@tauri-apps/api/dialog'
+import { appDir } from '@tauri-apps/api/path'
 
 import MenuTools from '../MenuTools'
 import { PlusCircle } from 'react-feather'
@@ -18,8 +20,21 @@ const Menu = ({ selected }: { selected: string }) => {
     navigate('/')
   }
 
-  function handleAddComic () {
-    // electron.ipcRenderer.send('toggle-dialog')
+  async function handleAddComic () {
+    const selected = await open({
+      multiple: true,
+      directory: true,
+      defaultPath: await appDir()
+    });
+    if (Array.isArray(selected)) {
+      // user selected multiple files
+      console.log(selected)
+    } else if (selected === null) {
+      // user cancelled the selection
+    } else {
+      // user selected a single file
+      console.log(selected)
+    }
   }
 
   return (
