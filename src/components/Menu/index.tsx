@@ -6,18 +6,22 @@ import { appDir } from '@tauri-apps/api/path'
 import MenuTools from '../MenuTools'
 import { PlusCircle } from 'react-feather'
 import styles from './styles.module.sass'
+import { useHeaderTitleContext } from '../../context/MenuTitle'
 
 // const electron = window.require('electron');
 
 const Menu = ({ selected }: { selected: string }) => {
   const navigate = useNavigate();
+  const { setTitle } = useHeaderTitleContext()
 
   function handleSetup () {
     navigate('/config')
+    setTitle('Setup')
   }
-
+  
   function handleHome () {
     navigate('/')
+    setTitle('Home')
   }
 
   async function handleAddComic () {
@@ -40,11 +44,11 @@ const Menu = ({ selected }: { selected: string }) => {
   return (
     <div className={styles['menu-container']} style={{ backgroundColor: 'rgba(85,85,85,0.5)' }}>
       <MenuTools />
-      <ul data-tauri-drag-region>
-        <li className={selected === 'Home' ? styles['border-menu-item'] : ''} onClick={handleHome}>Home</li>
-        <li className={selected === 'Setup' ? styles['border-menu-item'] : ''} onClick={handleSetup}>Setup</li>
-        <li className=""><PlusCircle onClick={handleAddComic} size={24} /></li>
-      </ul>
+        <ul data-tauri-drag-region>
+          <li className={selected === 'Home' ? styles['border-menu-item'] : ''} onClick={handleHome}>Home</li>
+          <li className={selected === 'Setup' ? styles['border-menu-item'] : ''} onClick={handleSetup}>Setup</li>
+          <li className=""><PlusCircle onClick={handleAddComic} size={24} /></li>
+        </ul>
     </div>
   )
 }

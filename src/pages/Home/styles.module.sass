@@ -1,7 +1,10 @@
 .content-container
-  width: calc(100% - 50px)
+  height: 100%
+  width: 100%
+  overflow-y: scroll
 
   .comics-container
+    margin-top: 20px
     &:hover
       color: white
 
@@ -13,20 +16,20 @@
       &:hover
         color: white
 
-    .comic-list
-      display: grid
-      grid-template-columns: repeat(2, 1fr)
-      grid-gap: 12px
-      justify-items: center
+  .comic-list
+    display: grid
+    grid-template-columns: repeat(2, 1fr)
+    gap: 12px
+    justify-items: center
 
-      @media (min-width: 650px)
-        grid-template-columns: repeat(3, 1fr)
+    @media (min-width: 650px)
+      grid-template-columns: repeat(3, 1fr)
 
-      @media (min-width: 950px)
-        grid-template-columns: repeat(4, 1fr)
+    @media (min-width: 950px)
+      grid-template-columns: repeat(4, 1fr)
 
-      @media (min-width: 1250px)
-        grid-template-columns: repeat(5, 1fr)
+    @media (min-width: 1250px)
+      grid-template-columns: repeat(5, 1fr)
 
-      @media (min-width: 1550px)
-        grid-template-columns: repeat(6, 1fr)
+    @media (min-width: 1550px)
+      grid-template-columns: repeat(6, 1fr)

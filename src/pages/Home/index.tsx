@@ -136,15 +136,16 @@ function Home() {
   } else {
     return (
       <div className={styles['content-container']}>
+        <div className={styles['comics-container']}>
         { comics.length > 0 ? (
-          <div className={styles['comics-container']}>
+          <>
             <ArrowLeft onClick={showFiles} className={styles['arrow-left-icon']} />
             <div className={styles['comic-list']}>
               { comics.map(comic => (
                 <ComicCard key={comic.name} name={comic.name} folder={comic.folder} dir={comic.dir} cover={comic.cover} openFile={openFile} />
               ))}
             </div>
-          </div>
+          </>
         ) : (
           <div className={styles['comic-list']}>
             { folders.map(folder => (
@@ -152,6 +153,7 @@ function Home() {
             ))}
           </div>
         ) }
+        </div>
       </div> 
     )
   }
