@@ -7,6 +7,7 @@
     "src/preload/*.d.ts"
   ],
   "compilerOptions": {
+    "types": ["vite-plugin-svgr/client"],
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
