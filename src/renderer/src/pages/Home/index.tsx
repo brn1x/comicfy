@@ -1,9 +1,21 @@
-import Example from '@components/Example'
+import { useEffect } from 'react'
 
-const Home = (): JSX.Element => {
+import Example from '@components/Example'
+import { useMenu } from '@context/MenuContext'
+
+const Home: React.FC = () => {
+  const { setSelected, selected } = useMenu()
+
+  useEffect(() => {
+    setSelected('Home')
+    console.log(selected)
+  }, [])
+
   return (
     <>
       <Example />
+      <button onClick={(): void => setSelected('Setup')}>Salve</button>
+      <button onClick={(): void => setSelected('Home')}>Salve</button>
     </>
   )
 }

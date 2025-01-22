@@ -1,4 +1,4 @@
-const NotFound = (): JSX.Element => {
+const NotFound: React.FC = () => {
   return <>Not found error</>
 }
 

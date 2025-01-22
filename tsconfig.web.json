@@ -16,6 +16,7 @@
         "src/renderer/src/*"
       ],
       "@components/*": ["src/renderer/src/components/*"],
+      "@context/*": ["src/renderer/src/context/*"],
       "@pages/*": ["src/renderer/src/pages/*"],
       "@assets/*": ["src/renderer/src/assets/*"],
     }

@@ -1,17 +1,22 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
 import Home from '@pages/Home'
 import NotFound from '@pages/NotFound'
+import Setup from '@pages/Setup'
 
-const Router = (): JSX.Element => {
+import Layout from '@renderer/Layout'
+
+const Router: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Define routes */}
-        <Route path="/" element={<Home />} />
-        {/* Catch-all route for 404 */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <Layout>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/setup" element={<Setup />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </Layout>
   )
 }
 

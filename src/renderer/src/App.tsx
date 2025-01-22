@@ -1,5 +1,4 @@
-// import Example from './components/Example'
-
+import ErrorBoundary from '@components/ErrorBoundary'
 import Router from './Router'
 
 // http://localhost:5173/
@@ -7,7 +6,9 @@ import Router from './Router'
 function App(): JSX.Element {
   return (
     <>
-      <Router />
+      <ErrorBoundary>
+        <Router />
+      </ErrorBoundary>
     </>
   )
 }
