@@ -3,9 +3,7 @@ const Example: React.FC = () => {
 
   return (
     <div className="action">
-      <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-        Send IPC
-      </a>
+      <button onClick={ipcHandle}>Send IPC</button>
     </div>
   )
 }

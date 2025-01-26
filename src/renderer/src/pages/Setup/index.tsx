@@ -1,4 +1,5 @@
 import { useMenu } from '@context/MenuContext'
+import Layout from '@renderer/Layout'
 import React, { useEffect } from 'react'
 
 const Setup: React.FC = () => {
@@ -9,9 +10,9 @@ const Setup: React.FC = () => {
   }, [])
 
   return (
-    <div>
+    <Layout>
       <h1>Setup Page</h1>
-    </div>
+    </Layout>
   )
 }
 

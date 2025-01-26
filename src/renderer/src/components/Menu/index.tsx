@@ -1,23 +1,28 @@
 import React from 'react'
-
-import { MenuContainer, MenuItem, MenuList } from './styles'
+import { useNavigate } from 'react-router-dom'
+import { MenuContainer, MenuItem, MenuList, IconWrapper, ComicfyIcon, ComicIcon } from './styles'
 import { useMenu } from '@renderer/context/MenuContext'
 
 const Menu: React.FC = () => {
-  const { selected } = useMenu()
+  const { selected, setSelected } = useMenu()
+  const navigate = useNavigate()
 
   function handleHome(): void {
-    console.log(selected)
-    console.log('Working...')
+    setSelected('Home')
+    navigate('/')
   }
 
   function handleSetup(): void {
-    console.log('Working...')
+    setSelected('Setup')
+    navigate('/setup')
   }
 
   return (
     <MenuContainer className="menu-container">
-      {/* <MenuTools /> */}
+      <IconWrapper>
+        <ComicIcon />
+        <ComicfyIcon />
+      </IconWrapper>
       <MenuList>
         <MenuItem active={selected === 'Home'} onClick={handleHome}>
           Home
@@ -25,7 +30,6 @@ const Menu: React.FC = () => {
         <MenuItem active={selected === 'Setup'} onClick={handleSetup}>
           Setup
         </MenuItem>
-        <MenuItem className="">A{/* <PlusCircle onClick={handleAddComic} size={24} /> */}</MenuItem>
       </MenuList>
     </MenuContainer>
   )
