@@ -18,7 +18,9 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false
     }
   })
 
@@ -70,5 +72,5 @@ app.on('window-all-closed', () => {
 })
 
 // IPC Listeners
-ipcMain.on('ping', () => console.log('pong'))
+ipcMain.on('ping', () => console.log(`pong ${__dirname}`))
 ipcMain.on('open-dialog', () => openDialog({ window: mainWindow, dialog }))

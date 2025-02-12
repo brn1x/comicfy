@@ -11,7 +11,8 @@ const Home: React.FC = () => {
 
   const openDialog = (): void => window.electron.ipcRenderer.send('open-dialog')
 
-  window.electron.ipcRenderer.on('loading', () => setLoading(!loading))
+  console.log('aaa', window.electron)
+  window?.electron?.ipcRenderer?.on('loading', () => setLoading(!loading))
 
   useEffect(() => {
     setSelected('Home')

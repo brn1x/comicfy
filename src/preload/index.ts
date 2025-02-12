@@ -1,5 +1,7 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { mkdirSync, existsSync } from 'fs'
+import { resolve } from 'path'
 
 // Custom APIs for renderer
 const api = {}
@@ -19,4 +21,8 @@ if (process.contextIsolated) {
   window.electron = electronAPI
   // @ts-ignore (define in dts)
   window.api = api
+}
+
+if (!existsSync(resolve(__dirname, '..', 'renderer', 'assets', 'covers'))) {
+  mkdirSync(resolve(__dirname, '..', 'renderer', 'assets', 'covers'), { recursive: true })
 }
