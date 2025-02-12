@@ -3,13 +3,11 @@ import { join, resolve } from 'path'
 import { shell } from 'electron'
 import { File } from '../interfaces/file'
 import { unzipFile } from '../utils/unzip'
-import { splitFilePath } from '../utils/splitFilePath'
 import { ArcFiles } from 'node-unrar-js'
-
-const SPLIT_PATH = splitFilePath()
+import { SPLIT_FILE_PATH } from '../utils/splitFilePath'
 
 export async function getCover(file: File): Promise<void> {
-  const outputDir = `${resolve(__dirname, '..', 'renderer', 'assets', 'covers') + SPLIT_PATH + file.name}`
+  const outputDir = `${resolve(__dirname, '..', 'renderer', 'assets', 'covers') + SPLIT_FILE_PATH + file.name}`
 
   const response = await unzipFile(file.dir)
 
@@ -19,12 +17,11 @@ export async function getCover(file: File): Promise<void> {
 
   createCoversDir(response.data, outputDir)
 
-  const allImgFiles = await verifyCoverFile(outputDir)
+  const allImgFiles = verifyCoverFile(outputDir)
 
-  const singleCover = await removeNoCoverFiles(allImgFiles as string[])
+  const singleCover = removeNoCoverFiles(allImgFiles as string[])
 
   file.cover = singleCover
-  console.log('Agora vai', file.cover)
 }
 
 export function createCoversDir(
@@ -53,14 +50,14 @@ export function verifyCoverFile(path: string): string[] {
   const covers = readdirSync(path, { withFileTypes: true })
 
   const allImgFiles: string[] = []
-  for (let i = 0; i < covers.length; i++) {
-    const response = resolve(path as string, covers[i].name)
-    if (covers[i].isDirectory()) {
+  for (const cover of covers) {
+    const response = resolve(path as string, cover.name)
+    if (cover.isDirectory()) {
       return verifyCoverFile(response)
     } else if (
-      covers[i].name.indexOf('.jpg') !== -1 ||
-      covers[i].name.indexOf('.png') !== -1 ||
-      covers[i].name.indexOf('.jpeg') !== -1
+      cover.name.includes('.jpg') ||
+      cover.name.includes('.png') ||
+      cover.name.includes('.jpeg')
     ) {
       allImgFiles.push(response)
     } else {
@@ -92,5 +89,5 @@ export function removeNoCoverFiles(fileDirs: string[]): string {
     }
   })
 
-  return fileDirs[0].split(SPLIT_PATH).pop()!
+  return fileDirs[0].split(SPLIT_FILE_PATH).pop()!
 }

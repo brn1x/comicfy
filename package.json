@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Desktop application to read and catalog comicbooks",
   "main": "./out/main/index.js",
-  "author": "brn1x <brunokfsop@gmail.com",
+  "author": "brn1x <brunokfsop@gmail.com>",
   "homepage": "",
   "scripts": {
     "format": "prettier --write .",
