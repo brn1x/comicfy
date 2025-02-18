@@ -1,6 +1,7 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
+    "src/main/**/*",
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
@@ -12,9 +13,8 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ],
+      "@main/*": ["src/main/*"],
+      "@renderer/*": [ "src/renderer/src/*"],
       "@components/*": ["src/renderer/src/components/*"],
       "@context/*": ["src/renderer/src/context/*"],
       "@pages/*": ["src/renderer/src/pages/*"],

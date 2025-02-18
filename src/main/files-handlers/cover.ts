@@ -6,7 +6,7 @@ import { unzipFile } from '../utils/unzip'
 import { ArcFiles } from 'node-unrar-js'
 import { SPLIT_FILE_PATH } from '../utils/splitFilePath'
 
-export async function getCover(file: File): Promise<void> {
+export async function getCover(file: File): Promise<File> {
   const outputDir = `${resolve(__dirname, '..', 'renderer', 'assets', 'covers') + SPLIT_FILE_PATH + file.name}`
 
   const response = await unzipFile(file.dir)
@@ -22,14 +22,17 @@ export async function getCover(file: File): Promise<void> {
   const singleCover = removeNoCoverFiles(allImgFiles as string[])
 
   file.cover = singleCover
+
+  return file
 }
 
 export function createCoversDir(
   extracted: ArcFiles<Uint8Array<ArrayBufferLike>>,
   outputDir: string
 ): void {
-  extracted.files.toArray().forEach((file) => {
-    const fileName = file.fileHeader.name.split('/').pop()
+  extracted.files.toArray().forEach((file, index) => {
+    const fileMimeType = file.fileHeader.name.split('.').pop()
+    const fileName = `${index}-cover.${fileMimeType}` //file.fileHeader.name.split('/').pop()
     const outputFilePath = join(outputDir, fileName!)
 
     if (!existsSync(resolve(outputDir))) {

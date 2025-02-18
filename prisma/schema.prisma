@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Serie {
+  id        String   @id
+  title     String
+  filePath  String   @map("file_path")
+  comics    Comic[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Comic {
+  id        String   @id
+  title     String
+  filePath  String   @map("file_path")
+  coverPath String   @map("cover_path")
+  serie     Serie    @relation(fields: [serieId], references: [id])
+  serieId   String   @map("serie_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}

@@ -40,7 +40,7 @@ export const MenuItem = styled.li<MenuItemProps>`
   font-size: 20px;
   font-weight: 500;
 
-  ${({ active }): string | undefined => (active ? 'border-bottom: 4px solid #a9a7d1;' : undefined)}
+  ${({ active }): string | undefined => (active ? 'border-bottom: 4px solid #808099;' : undefined)}
 `
 
 export const IconWrapper = styled.div`

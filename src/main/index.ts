@@ -1,8 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain, screen, dialog } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { openDialog } from './files-handlers/openDialog'
+import { findManyComics } from './repositories/comicRepository'
 
 const WINDOW_WIDTH = 900
 const WINDOW_HEIGHT = 670
@@ -63,6 +64,8 @@ app.whenReady().then(() => {
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  mainWindow.loadURL('file://' + path.join(__dirname, '../renderer', 'index.html'))
 })
 
 app.on('window-all-closed', () => {
@@ -74,3 +77,6 @@ app.on('window-all-closed', () => {
 // IPC Listeners
 ipcMain.on('ping', () => console.log(`pong ${__dirname}`))
 ipcMain.on('open-dialog', () => openDialog({ window: mainWindow, dialog }))
+
+ipcMain.handle('get-comics', async (_, args) => await findManyComics({ serieId: args }))
+ipcMain.handle('get-covers-path', async () => await path.join(app.getAppPath(), 'assets/covers'))
