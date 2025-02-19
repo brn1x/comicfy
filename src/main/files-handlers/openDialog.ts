@@ -7,6 +7,7 @@ import { createSerie, findSerie } from '../repositories/serieRepository'
 import { Serie } from '../entities/Serie'
 import { createManyComics, findManyComics } from '../repositories/comicRepository'
 import { Comic } from '../entities/Comic'
+import { eraseDb } from '../repositories/utilsRepository'
 
 interface OpenDialogRequest {
   window: BrowserWindow
@@ -20,6 +21,9 @@ interface GetSerieProps {
 
 export async function openDialog({ window, dialog }: OpenDialogRequest): Promise<void> {
   window.webContents.send('loading')
+
+  await eraseDb()
+
   const path = dialog.showOpenDialogSync({ properties: ['openDirectory'] })
 
   if (!path?.length) {
@@ -64,7 +68,9 @@ export async function openDialog({ window, dialog }: OpenDialogRequest): Promise
       return !findComics.some((comic) => comic.title === files.name)
     })
 
-    const createdComics = filteredFiles.map((file) => {
+    const teste = Array.from({ length: 5 }, () => filteredFiles).flat()
+
+    const createdComics = teste.map((file) => {
       return Comic.create({
         title: file.name,
         filePath: file.dir,

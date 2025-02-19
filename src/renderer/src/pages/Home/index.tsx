@@ -4,13 +4,14 @@ import Example from '@components/Example'
 import { useMenu } from '@context/MenuContext'
 import { useComic } from '@context/ComicContext'
 import Layout from '@renderer/Layout'
+import ComicCard from '@renderer/components/ComicCard'
+import { List } from '@renderer/components/List'
 
 const Home: React.FC = () => {
   const { setSelected } = useMenu()
   const { comics, getComics } = useComic()
 
   const [loading, setLoading] = useState(false)
-  const [images, setImages] = useState<string[]>([])
 
   const openDialog = (): void => window.electron.ipcRenderer.send('open-dialog')
 
@@ -19,33 +20,30 @@ const Home: React.FC = () => {
   useEffect(() => {
     setSelected('Home')
     getComics({ serieId: '' })
-
-    const loadImages = (): void => {
-      const imgPaths = window.electronAPI.getImages()
-      setImages(imgPaths)
-    }
-
-    loadImages()
-  }, [])
+  }, [loading])
 
   return (
     <Layout>
       <Example />
       <button onClick={openDialog}>OpenDialog</button>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        comics.map((comic, index) => {
-          console.log('[Found Images]', images)
 
-          return (
-            <div key={comic.id}>
-              <h1>{comic.title}</h1>
-              <img src={images[index]} />
-            </div>
-          )
-        })
-      )}
+      <List>
+        {loading
+          ? Array.from({ length: 12 }).map((_, index) => (
+              <ComicCard isLoading={loading} key={index} coverPath="" comicTitle="" />
+            ))
+          : comics.map((comic) => {
+              const coverPath = `file://${comic.coverPath}`
+              return (
+                <ComicCard
+                  isLoading={loading}
+                  key={comic.id}
+                  coverPath={coverPath}
+                  comicTitle={comic.title}
+                />
+              )
+            })}
+      </List>
     </Layout>
   )
 }

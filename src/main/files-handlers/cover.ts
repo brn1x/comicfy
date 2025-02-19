@@ -92,5 +92,5 @@ export function removeNoCoverFiles(fileDirs: string[]): string {
     }
   })
 
-  return fileDirs[0].split(SPLIT_FILE_PATH).pop()!
+  return fileDirs[0]
 }

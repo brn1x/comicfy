@@ -4,8 +4,5 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: unknown
-    electronAPI: {
-      getImages: () => string[]
-    }
   }
 }
