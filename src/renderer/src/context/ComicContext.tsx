@@ -4,6 +4,8 @@ import { Comic } from '@main/entities/Comic'
 interface ComicContextProps {
   comics: Comic[]
   setComics: (comics: Comic[]) => void
+  selectedComic: Comic | null
+  setSelectedComic: (comic: Comic | null) => void
   getComics: (payload: GetComicsInContextRequest) => Promise<void>
 }
 
@@ -16,6 +18,7 @@ interface GetComicsInContextRequest {
 // eslint-disable-next-line react/prop-types
 export const ComicProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [comics, setComics] = useState<Comic[]>([])
+  const [selectedComic, setSelectedComic] = useState<Comic | null>(null)
 
   async function getComicsInContext({ serieId }: GetComicsInContextRequest): Promise<void> {
     const getComics = (): Promise<Comic[]> =>
@@ -31,6 +34,8 @@ export const ComicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       value={{
         comics,
         setComics,
+        selectedComic,
+        setSelectedComic,
         getComics: getComicsInContext
       }}
     >
