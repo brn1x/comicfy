@@ -5,6 +5,8 @@ import icon from '../../resources/icon.png?asset'
 import { openDialog } from './files-handlers/openDialog'
 import { findManyComics } from './repositories/comicRepository'
 import { findManySeries } from './repositories/serieRepository'
+import { openComic } from './files-handlers/openComic'
+import { deleteOpenComic } from './files-handlers/deleteOpenComic'
 
 const WINDOW_WIDTH = 900
 const WINDOW_HEIGHT = 670
@@ -82,3 +84,9 @@ ipcMain.on('open-dialog', () => openDialog({ window: mainWindow, dialog }))
 ipcMain.handle('get-series', async () => await findManySeries())
 ipcMain.handle('get-comics', async (_, serieId) => await findManyComics({ serieId }))
 ipcMain.handle('get-covers-path', async () => await path.join(app.getAppPath(), 'assets/covers'))
+
+ipcMain.handle(
+  'open-comic',
+  async (_, filePath) => await openComic({ window: mainWindow, comicPath: filePath })
+)
+ipcMain.handle('delete-opened-comic', async () => deleteOpenComic())

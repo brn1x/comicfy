@@ -11,10 +11,12 @@ import SerieCard from '@renderer/components/SerieCard'
 import { Serie } from '@main/entities/Serie'
 import { FaArrowAltCircleLeft as ArrowLeft } from 'react-icons/fa'
 
+/******  a68a7767-353c-459f-b1ab-d325779f5850  *******/
 const Home: React.FC = () => {
   const { setSelected } = useMenu()
   const { comics, getComics } = useComic()
   const { series, getSeries, setSelectedSerie, selectedSerie } = useSerie()
+  const [comicfiles, setComicfiles] = useState<string[]>([])
 
   const [loading, setLoading] = useState(false)
 
@@ -23,13 +25,29 @@ const Home: React.FC = () => {
   window?.electron?.ipcRenderer?.on('loading', () => setLoading(!loading))
 
   function handleSelecSerie(serie: Serie): void {
-    console.log('Clicou!')
     setSelectedSerie(serie)
     getComics({ serieId: serie.id })
   }
 
-  function functionHandleUnSelecSerie(): void {
+  async function functionHandleUnSelecSerie(): Promise<void> {
+    if (comicfiles.length) {
+      const deleteOpenedComic = (): Promise<boolean> =>
+        window.electron.ipcRenderer.invoke('delete-opened-comic')
+
+      const response = await deleteOpenedComic()
+      if (response) {
+        setComicfiles([])
+      }
+    }
     setSelectedSerie(null)
+  }
+
+  async function handleComicCardClick(filePath: string): Promise<void> {
+    const openComic = (): Promise<string[]> =>
+      window.electron.ipcRenderer.invoke('open-comic', filePath)
+    const filesFromIpc = await openComic()
+
+    setComicfiles(filesFromIpc)
   }
 
   const renderSeriesList = (): JSX.Element => {
@@ -40,10 +58,9 @@ const Home: React.FC = () => {
               <SerieCard isLoading={loading} key={index} serieTitle="" />
             ))
           : series.map((serie) => {
-              const handleClick = (): void => handleSelecSerie(serie)
               return (
                 <SerieCard
-                  onClick={handleClick}
+                  onClick={() => handleSelecSerie(serie)}
                   isLoading={loading}
                   key={serie.id}
                   serieTitle={serie.title}
@@ -65,6 +82,7 @@ const Home: React.FC = () => {
               const coverPath = `file://${comic.coverPath}`
               return (
                 <ComicCard
+                  onClick={() => handleComicCardClick(comic.filePath)}
                   isLoading={loading}
                   key={comic.id}
                   coverPath={coverPath}
@@ -76,10 +94,20 @@ const Home: React.FC = () => {
     )
   }
 
+  const renderImages = (): JSX.Element => {
+    return (
+      <div>
+        {comicfiles.map((file, index) => (
+          <img src={file} key={index} />
+        ))}
+      </div>
+    )
+  }
+
   useEffect(() => {
     setSelected('Home')
     getSeries()
-  }, [loading])
+  }, [loading, comicfiles.length])
 
   return (
     <Layout>
@@ -91,7 +119,7 @@ const Home: React.FC = () => {
           style={{ marginLeft: '20px', cursor: 'pointer' }}
         />
       )}
-      {selectedSerie ? renderComicsList() : renderSeriesList()}
+      {comicfiles.length ? renderImages() : selectedSerie ? renderComicsList() : renderSeriesList()}
       <Example />
       <button onClick={openDialog}>OpenDialog</button>
     </Layout>

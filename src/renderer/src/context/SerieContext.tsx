@@ -20,7 +20,6 @@ export const SerieProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const getSeries = (): Promise<Serie[]> => window.electron.ipcRenderer.invoke('get-series')
 
     const series = await getSeries()
-    console.log('[GET Series Context]', series)
     setSeries(series)
   }
 

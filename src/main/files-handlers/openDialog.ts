@@ -78,8 +78,7 @@ export async function openDialog({ window, dialog }: OpenDialogRequest): Promise
         serieId: serie.id
       })
     })
-    const comics = await createManyComics(createdComics)
-    console.log('[Comics Created]', comics)
+    await createManyComics(createdComics)
   } catch (error) {
     console.log(error)
   }

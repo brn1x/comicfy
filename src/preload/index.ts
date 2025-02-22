@@ -27,3 +27,7 @@ if (process.contextIsolated) {
 if (!existsSync(resolve(__dirname, '..', 'renderer', 'assets', 'covers'))) {
   mkdirSync(resolve(__dirname, '..', 'renderer', 'assets', 'covers'), { recursive: true })
 }
+
+if (!existsSync(resolve(__dirname, '..', 'renderer', 'assets', 'opened-comic'))) {
+  mkdirSync(resolve(__dirname, '..', 'renderer', 'assets', 'opened-comic'), { recursive: true })
+}

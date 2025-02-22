@@ -25,7 +25,6 @@ export const ComicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       window.electron.ipcRenderer.invoke('get-comics', serieId)
 
     const comics = await getComics()
-    console.log('[GET Comics Context]', comics)
     setComics(comics)
   }
 
